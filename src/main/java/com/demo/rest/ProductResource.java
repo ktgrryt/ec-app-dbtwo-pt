@@ -76,15 +76,15 @@ public class ProductResource {
         List<Object> params = new ArrayList<>();
 
         if (!isNullOrEmpty(productName)) {
-            sql.append(" AND SUBSTRING(UPPER(p.name), 1, LEN(UPPER(p.name))) LIKE ?");
+            sql.append(" AND SUBSTRING(UPPER(p.name), 1, LENGTH(UPPER(p.name))) LIKE ?");
             params.add(toLikePattern(productName));
         }
         if (!isNullOrEmpty(categoryName)) {
-            sql.append(" AND SUBSTRING(UPPER(c.name), 1, LEN(UPPER(c.name))) LIKE ?");
+            sql.append(" AND SUBSTRING(UPPER(c.name), 1, LENGTH(UPPER(c.name))) LIKE ?");
             params.add(toLikePattern(categoryName));
         }
         if (!isNullOrEmpty(brandName)) {
-            sql.append(" AND SUBSTRING(UPPER(b.name), 1, LEN(UPPER(b.name))) LIKE ?");
+            sql.append(" AND SUBSTRING(UPPER(b.name), 1, LENGTH(UPPER(b.name))) LIKE ?");
             params.add(toLikePattern(brandName));
         }
 
