@@ -11,7 +11,7 @@
 
     <!-- 1. Db2 JDBC ドライバー -->
     <library id="Db2Lib">
-        <fileset dir="${shared.resource.dir}/db2" includes="jcc-*.jar"/>
+        <fileset dir="/opt/ol/wlp/usr/shared/resources/db2" includes="*.jar"/>
     </library>
 
     <!-- 2. XADataSource クラス -->
