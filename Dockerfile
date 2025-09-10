@@ -14,7 +14,7 @@ RUN mvn -q dependency:copy \
       -DoutputDirectory=target/db2
 
 ### ---------- runtime stage ----------
-FROM icr.io/appcafe/open-liberty:kernel-slim-java17-openj9-ubi
+FROM icr.io/appcafe/websphere-liberty:kernel-java17-openj9-ubi
 
 # Db2 ドライバーを shared lib へ配置
 COPY --chown=1001:0 --from=builder /app/target/db2/jcc-11.5.9.0.jar \
