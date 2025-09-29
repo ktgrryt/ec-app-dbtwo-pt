@@ -65,38 +65,46 @@ public class ProductResource {
         // --- SQL を動的生成 --------------------------------------------------
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT p.id, p.name, p.description, ")
-        .append("       c.name AS category_name, ")
-        .append("       b.name AS brand_name, ")
-        .append("       (SELECT COUNT(*) FROM products p2 WHERE p2.category_id = p.category_id) AS category_product_count ")
-        .append("FROM   products p ")
-        .append("LEFT JOIN categories c ON c.id = p.category_id ")
-        .append("LEFT JOIN brands     b ON b.id = p.brand_id ")
-        .append("WHERE 1=1");
-
+          .append("       c.name AS category_name, ")
+          .append("       b.name AS brand_name, ")
+          .append("       (SELECT COUNT(*) FROM products p2 WHERE p2.category_id = p.category_id) AS category_product_count ")
+          .append("FROM   products p ")
+          .append("LEFT JOIN categories c ON c.id = p.category_id ")
+          .append("LEFT JOIN brands     b ON b.id = p.brand_id ");
+        
         List<Object> params = new ArrayList<>();
-
+        
+        boolean first = true;
+        
         if (!isNullOrEmpty(productName)) {
-            sql.append(" AND SUBSTRING(UPPER(p.name), 1, LENGTH(UPPER(p.name))) LIKE ?");
+            sql.append(first ? " WHERE " : " AND ");
+            sql.append("SUBSTRING(UPPER(p.name), 1, LENGTH(UPPER(p.name))) LIKE ?");
             params.add(toLikePattern(productName));
+            first = false;
         }
         if (!isNullOrEmpty(categoryName)) {
-            sql.append(" AND SUBSTRING(UPPER(c.name), 1, LENGTH(UPPER(c.name))) LIKE ?");
+            sql.append(first ? " WHERE " : " AND ");
+            sql.append("SUBSTRING(UPPER(c.name), 1, LENGTH(UPPER(c.name))) LIKE ?");
             params.add(toLikePattern(categoryName));
+            first = false;
         }
         if (!isNullOrEmpty(brandName)) {
-            sql.append(" AND SUBSTRING(UPPER(b.name), 1, LENGTH(UPPER(b.name))) LIKE ?");
+            sql.append(first ? " WHERE " : " AND ");
+            sql.append("SUBSTRING(UPPER(b.name), 1, LENGTH(UPPER(b.name))) LIKE ?");
             params.add(toLikePattern(brandName));
+            first = false;
         }
-
-        sql.append(" ORDER BY SUBSTRING(p.name, 1, 1), p.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"); 
+        
+        sql.append(" ORDER BY SUBSTRING(p.name, 1, 1), p.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         params.add(offset);
         params.add(pageSize);
-
+        
         try (Connection conn = ds.getConnection();
-            PreparedStatement ps = prepare(conn, sql.toString(), params);
-            ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = prepare(conn, sql.toString(), params);
+             ResultSet rs = ps.executeQuery()) {
             return mapProducts(rs);
         }
+
     }
 
     /* --------------------------------------------------
